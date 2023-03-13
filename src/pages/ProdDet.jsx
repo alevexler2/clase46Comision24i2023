@@ -3,9 +3,14 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { endpoints } from "../helpers/endpoints";
 import Loader from '../components/loader/Loader';
+import { useNavigate } from 'react-router-dom';
+import Swal from "sweetalert2";
+import { messages } from "../utils/commonMessages";
+
 
 const ProdDet = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [prod, setProd] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,12 +21,21 @@ const ProdDet = () => {
   const getData = async () => {
     const urlBase = process.env.REACT_APP_URL_API;
     try {
-      const { data } = await axios.get(`${urlBase}${endpoints.products}/${id}`);
+      const { data } = await axios.get(`${urlBase}${endpoints.products}/${id}/`);
       setProd(data);
       setIsLoading(true);
     } catch (error) {
-      alert("Ha ocurrido un error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: messages.failGetProduct
+      });
+      navigate('/home');
     }
+  };
+
+  const startAlert = () => {
+    
   };
 
   return (
@@ -94,7 +108,7 @@ const ProdDet = () => {
             <div className="mt-5 text-end">
               <h3>${prod.price} USD</h3>
               <h4>Quedan {prod.quantity} UD.</h4>
-              <button className="btn btn-primary mb-5">Comprar</button>
+              <button onClick={() => startAlert()} className="btn btn-primary mb-5">Comprar</button>
             </div>
           </div>
         </div>
